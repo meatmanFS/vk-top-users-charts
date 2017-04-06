@@ -14,5 +14,7 @@
 Route::get('/', 'FrontController@index');
 
 Route::auth();
-
+// Dashboard
 Route::get('/dashboard', 'DashboardController@index');
+Route::get('/dashboard/settings', 'DashboardController@settings');
+Route::post('/dashboard/settings', 'DashboardController@store');

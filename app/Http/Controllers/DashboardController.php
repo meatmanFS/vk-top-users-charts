@@ -26,7 +26,8 @@ class DashboardController extends Controller
      */
     public function index()
     {
-		$items_number	=	1000;
+		$items_number	=	Settings::get_option( 'vk_users_number' );
+		$items_number	=	!empty( $items_number )? $items_number: 100000;// default be 100000 :)
 		$items_сount	= VK_Data::count();		
 		$persent		= ( ( $items_сount /( $items_number / 100 )  ) < 100 ) ? $items_сount /( $items_number / 100 ): 100;
 				
@@ -40,13 +41,15 @@ class DashboardController extends Controller
     }
 
     public function settings(){
-        $login_url      = Settings::get_login_url();
-        $client_id      = Settings::get_client_id();
-        $client_secret  = Settings::get_client_secret();
-        $oauth_error    = Settings::check_oauth();
-        $access_token    = Settings::get_access_token();
+        $login_url			= Settings::get_login_url();
+        $client_id			= Settings::get_client_id();
+        $client_secret		= Settings::get_client_secret();
+        $oauth_error		= Settings::check_oauth();
+        $access_token		= Settings::get_access_token();
+		$vk_users_number	=	Settings::get_option( 'vk_users_number' );
+		$vk_users_number	=	!empty( $vk_users_number )? $vk_users_number: 100000;// default be 100000 :)
 
-        return view('dashboard.settings', compact('client_id','login_url','client_secret','oauth_error','access_token'));
+        return view('dashboard.settings', compact('client_id','login_url','client_secret','oauth_error','access_token','vk_users_number'));
     }
 
     public function store( Request $request ){
@@ -55,8 +58,9 @@ class DashboardController extends Controller
             'client_secret' => 'required',
         ]);
 
-        $client_id = request()->input('client_id');
-        $client_secret = request()->input('client_secret');
+        $client_id			= request()->input('client_id');
+        $client_secret		= request()->input('client_secret');
+        $vk_users_number	= request()->input('vk_users_number');
         
         Settings::updateOrCreate( 
             ['name' => 'client_id'],
@@ -65,6 +69,10 @@ class DashboardController extends Controller
         Settings::updateOrCreate( 
             ['name' => 'client_secret'],
             ['value' => $client_secret ]
+        );
+        Settings::updateOrCreate( 
+            ['name' => 'vk_users_number'],
+            ['value' => $vk_users_number ]
         );
         return back();
     }

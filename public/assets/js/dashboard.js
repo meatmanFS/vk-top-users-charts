@@ -1,30 +1,44 @@
 jQuery(document).ready(function($){
 	$('.vk-api-import-errror, .vk-api-import-success').hide();
-	
+	var run_update;
 	$( '.start-vk-api-import' ).click(function(){
 		if( $( this ).data('import-running') !=1  ){
 			$('.vk-api-import-success').show().html( '<h2>Import start! Please wait.</h2>' );
+			$( this ).removeClass( 'btn-primary' ).addClass( 'btn-danger' ).data('import-running', 1).text('Stop Import');
 			var itemsNumber = dashboardImportData.itemsNumber;// how many we need items
-			$( this ).removeClass( 'active' ).data('import-running', 1);
+			run_update = true;
 			runVKImport( itemsNumber );			
+		} else {
+			run_update = false;
+			$( this ).removeClass( 'btn-danger' ).addClass( 'btn-primary' ).text('Start Import').data('import-running', 0 );
+			$('.start-vk-api-import-progress').removeClass('active');
+			$('.vk-api-import-errror, .vk-api-import-success').hide();
 		}
 	});
 	
 	function runVKImport( itemsNumber ){
+		if( !run_update ){
+			return;
+		}
 		var itemsCount = 0;
 		$.ajax({
 			method: "POST",
 			url: dashboardImportData.startImportUrl,
 			timeout: 360000,
-			data: {
-				itemsNumber: itemsNumber
-			},
 			beforeSend: function( xhr ){ 
 				xhr.setRequestHeader( 'X-CSRF-TOKEN', dashboardImportData.token );				
 			},				
 		}).fail(function( jqXHR, textStatus, errorThrown ) {
+			if( !run_update ){
+				return;
+			}
 			$('.vk-api-import-errror').show().html( '<h2>' + errorThrown +'<h2>' );
+			//try again on fail
+			runVKImport( itemsNumber );
 		}).done(function(response){
+			if( !run_update ){
+				return;
+			}
 			$('.vk-api-import-errror, .vk-api-import-success').hide();
 			if( response.result == 'success' ){
 				itemsCount = response.items_count;
@@ -46,6 +60,8 @@ jQuery(document).ready(function($){
 				$('.vk-api-import-errror').show().html( '<h2>' + response.message +'</h2>' );		
 				$('.start-vk-api-import-progress').removeClass('active');
 				$( '.start-vk-api-import' ).addClass( 'active' ).data('import-running', 0);
+				//try again on fail
+				runVKImport( itemsNumber );
 			}
 		});	
 	}

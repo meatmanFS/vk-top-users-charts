@@ -26,8 +26,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-		$items_number	=	Settings::get_option( 'vk_users_number' );
-		$items_number	=	!empty( $items_number )? $items_number: 100000;// default be 100000 :)
+		$items_number	=	$this->get_items_number();
 		$items_сount	= VK_Data::count();		
 		$persent		= ( ( $items_сount /( $items_number / 100 )  ) < 100 ) ? $items_сount /( $items_number / 100 ): 100;
 				
@@ -35,7 +34,6 @@ class DashboardController extends Controller
 			'startImportUrl'	=> url('/dashboard/start-import/'),
 			'token'				=> csrf_token(),
 			'itemsNumber'		=> $items_number,
-			'itemsCount'		=> $items_сount,
 		);
         return view('dashboard.index', compact( 'import_data','items_number','items_сount', 'persent' ));
     }
@@ -46,12 +44,16 @@ class DashboardController extends Controller
         $client_secret		= Settings::get_client_secret();
         $oauth_error		= Settings::check_oauth();
         $access_token		= Settings::get_access_token();
-		$vk_users_number	=	Settings::get_option( 'vk_users_number' );
-		$vk_users_number	=	!empty( $vk_users_number )? $vk_users_number: 100000;// default be 100000 :)
+		$vk_users_number	= $this->get_items_number();
 
         return view('dashboard.settings', compact('client_id','login_url','client_secret','oauth_error','access_token','vk_users_number'));
     }
 
+	public function get_items_number() {
+		$items_number	=	Settings::get_option( 'vk_users_number' );
+		return !empty( $items_number )? $items_number: 100000;// default be 100000 :)
+	}
+	
     public function store( Request $request ){
         $this->validate($request, [
             'client_id'     => 'required',
@@ -78,8 +80,9 @@ class DashboardController extends Controller
     }
 	
 	public function start_import( Request $request ) { 
-		if( VK_Data::count() < $request->input('itemsNumber') ){
-			$import = VK_Data::run_import(  $request->input('itemsNumber') );
+		$items_number	=	$this->get_items_number();
+		if( VK_Data::count() < $items_number ){
+			$import = VK_Data::run_import(  $items_number );
 			if( $import === true ){
 				return response()->json( ['result' => 'success', 'message'=> "Import started! Fetching users, please wait.", 'items_count'=> VK_Data::count() ] );				
 			} else {

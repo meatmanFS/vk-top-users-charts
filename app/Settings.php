@@ -50,6 +50,14 @@ class Settings extends Model
     	}
     	return '';
     }
+	
+    public static function get_option( $option_name ){
+    	$option = Settings::where('name', $option_name )->get()->first();
+    	if( !empty( $option->value ) ){
+    		return $option->value;
+    	}
+    	return '';
+    }
 
     public static function check_oauth(){
     	if( !empty( $_GET['code'] ) ){

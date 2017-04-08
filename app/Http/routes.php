@@ -18,3 +18,6 @@ Route::auth();
 Route::get('/dashboard', 'DashboardController@index');
 Route::get('/dashboard/settings', 'DashboardController@settings');
 Route::post('/dashboard/settings', 'DashboardController@store');
+// Dashboard Ajax
+Route::post('/dashboard/start-import/', 'DashboardController@start_import');
+

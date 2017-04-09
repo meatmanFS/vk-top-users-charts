@@ -58,6 +58,13 @@ class Settings extends Model
     	}
     	return '';
     }
+	
+    public static function update_option( $option_name, $option_value ){
+    	return self::updateOrCreate( 
+            ['name' => $option_name],
+            ['value' => $option_value ]
+        );
+    }
 
     public static function check_oauth(){
     	if( !empty( $_GET['code'] ) ){

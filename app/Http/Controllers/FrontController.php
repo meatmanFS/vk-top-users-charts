@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\VK_Data;
+use App\Settings;
 
 class FrontController extends Controller
 {
@@ -42,10 +43,22 @@ class FrontController extends Controller
 		} 
 
 		if( empty( $first_name ) ){
-			$first_name = VK_Data::get_first_name();
+			$vk_first_name_cache = Settings::get_option( 'vk_first_name_cache' );
+			if( !empty( $vk_first_name_cache ) ){
+				$first_name = unserialize( $vk_first_name_cache );	
+			} else {
+				$first_name = VK_Data::get_first_name();	
+				Settings::update_option( 'vk_first_name_cache', serialize( $first_name ) );
+			}
 		}
 		if( empty( $last_name ) ){
-			$last_name = VK_Data::get_last_name();
+			$vk_last_name_cache = Settings::get_option( 'vk_last_name_cache' );
+			if( !empty( $vk_last_name_cache ) ){
+				$last_name = unserialize( $vk_last_name_cache );	
+			} else {
+				$last_name = VK_Data::get_last_name();
+				Settings::update_option( 'vk_last_name_cache', serialize( $last_name ) );
+			}
 		}
 		$data = array();
 		foreach ( $first_name  as $key => $value) {

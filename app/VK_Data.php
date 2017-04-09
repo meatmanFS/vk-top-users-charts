@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Settings;
+use DB;
 
 class VK_Data extends Model
 {
@@ -257,5 +258,17 @@ class VK_Data extends Model
 			return $cities;
 		}
 		return false;
+	}
+	
+	public static function get_first_name( $order = 'DESC' ){
+		return self::select( 'first_name' , DB::raw('count(*) as first_name_count') )
+			->groupBy('first_name')->orderBy( 'first_name_count', $order )->limit( 10 )
+			->get();
+	}
+	
+	public static function get_last_name( $order = 'DESC' ){
+		return self::select( 'last_name' , DB::raw('count(*) as last_name_count') )
+			->groupBy('last_name')->orderBy( 'last_name_count', $order )->limit( 10 )
+			->get();
 	}
 }

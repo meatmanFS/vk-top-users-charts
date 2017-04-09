@@ -12,6 +12,7 @@
 */
 
 Route::get('/', 'FrontController@index');
+Route::post('/vk-data', 'FrontController@vk_data');
 
 Route::auth();
 // Dashboard

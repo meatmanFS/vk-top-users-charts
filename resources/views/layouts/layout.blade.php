@@ -16,6 +16,8 @@
 			}
 		</style>
 		<link href="/assets/css/bootstrap-responsive.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="/assets/css/font-awesome/css/font-awesome.min.css">
+		<link rel="stylesheet" href="/assets/css/style.css">
 		<link rel="shortcut icon" href="/assets/ico/favicon.ico">
 	</head>
 

@@ -1,0 +1,6 @@
+.column-sortable{
+	cursor: pointer;
+}
+#vk-top-users-table .table-wrapper {
+    min-height: 400px;
+}

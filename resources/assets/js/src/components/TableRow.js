@@ -1,5 +1,4 @@
 import React, { createClass } from 'react';
-// import { checkLocation } from '../actions/TableActions';
 
 export default createClass({
 	//reacts render the component here

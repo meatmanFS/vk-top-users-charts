@@ -9,7 +9,7 @@ const initialState = {
   hasRows: false,
 };
 
-export default function locationsList( state = initialState , action ) {
+export default function rowsList( state = initialState , action ) {
   switch (action.type) {    
     case types.GET_ROWS:   
     	return Object.assign({}, state, { 

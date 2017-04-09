@@ -13,7 +13,6 @@ var ChartApp = createClass({
 	},
  	// on sending the new props to the element
 	componentWillReceiveProps: function( nextProps ){
-		console.log(nextProps);
 		if( "first_name" == nextProps.order.sort ){
 			this.setState({
 				chartData: this.getFirstNameData(nextProps.rows)

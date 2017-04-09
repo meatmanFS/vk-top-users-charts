@@ -12,7 +12,7 @@ var TableApp = createClass({
 			ajax: false
 		};
 	},	
-	// On mounting the element get locations data , using the ajax
+	// On mounting the element get rows data , using the ajax
 	componentDidMount: function() {		
 		var _this = this;
 		this.serverRequest = this.sendAjaxRequest( appData.getData, this.props.order, "POST",function (result) {
@@ -64,7 +64,6 @@ var TableApp = createClass({
 	// On clicking the table headings , sort the rows	
 	sotrToggle: function( order_by ){
 		var sort = 'ASC';
-		var getLocations = {};
 		if( this.props.order.sort === order_by ){
 			if( this.props.order.order === 'ASC' ){
 				sort = 'DESC';

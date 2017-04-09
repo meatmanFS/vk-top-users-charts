@@ -10,7 +10,6 @@ const initialState = {
 };
 
 export default function locationsList( state = initialState , action ) {
-  console.log('<redusers> locationsList',state,  action );
   switch (action.type) {    
     case types.GET_ROWS:   
     	return Object.assign({}, state, { 

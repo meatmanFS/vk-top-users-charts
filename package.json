@@ -2,9 +2,11 @@
   "private": true,
   "dependencies": {
     "react": "^15.0.1",
+    "react-addons-transition-group": "^15.5.2",
     "react-dom": "^15.0.1",
     "react-gmaps": "^1.5.0",
     "react-redux": "^0.2.2",
+    "recharts": "^0.22.0",
     "redux": "^1.0.0-rc"
   },
   "devDependencies": {

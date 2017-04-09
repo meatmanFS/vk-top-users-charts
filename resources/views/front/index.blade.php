@@ -1,8 +1,7 @@
 @extends('layouts.layout')
 @section('content')
-    <div id="vk-top-users-table">
-    	
-    </div>
+    <div id="vk-top-users-chart"><i class="fa fa-spinner fa-6 fa-spin" aria-hidden="true"></i></div>
+    <div id="vk-top-users-table"><i class="fa fa-spinner fa-6 fa-spin" aria-hidden="true"></i></div>
 @endsection
 
 @section( 'scripts' )

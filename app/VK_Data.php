@@ -261,15 +261,15 @@ class VK_Data extends Model
 		return false;
 	}
 	
-	public static function get_first_name( $order = 'DESC' ){
+	public static function get_first_name( $order = 'DESC', $limit = 10 ){
 		return self::select( 'first_name' , DB::raw('count(*) as first_name_count') )
-			->groupBy('first_name')->orderBy( 'first_name_count', $order )->limit( 10 )
+			->groupBy('first_name')->orderBy( 'first_name_count', $order )->limit( $limit )
 			->get();
 	}
 	
-	public static function get_last_name( $order = 'DESC' ){
+	public static function get_last_name( $order = 'DESC', $limit = 10 ){
 		return self::select( 'last_name' , DB::raw('count(*) as last_name_count') )
-			->groupBy('last_name')->orderBy( 'last_name_count', $order )->limit( 10 )
+			->groupBy('last_name')->orderBy( 'last_name_count', $order )->limit( $limit )
 			->get();
 	}
 }

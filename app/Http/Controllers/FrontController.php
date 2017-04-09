@@ -24,6 +24,8 @@ class FrontController extends Controller
             'order'	=> 'required',
         ]);
 
+		$number_of_data = 30;
+		
         $sort	= request()->input('sort');
         $order	= request()->input('order');
 		if( 'desc' == strtolower( $order ) ){
@@ -37,9 +39,11 @@ class FrontController extends Controller
 		$last_name = array();
 
 		if( 'first_name' == strtolower( $sort ) ){
-			$first_name = VK_Data::get_first_name( $order );
+			$first_name = VK_Data::get_first_name( $order, $number_of_data );
+			Settings::update_option( 'vk_first_name_cache', serialize( $first_name ) );
 		} elseif( 'last_name' == strtolower( $sort ) ){
-			$last_name = VK_Data::get_last_name( $order );
+			$last_name = VK_Data::get_last_name( $order, $number_of_data );
+			Settings::update_option( 'vk_last_name_cache', serialize( $last_name ) );
 		} 
 
 		if( empty( $first_name ) ){
@@ -47,7 +51,7 @@ class FrontController extends Controller
 			if( !empty( $vk_first_name_cache ) ){
 				$first_name = unserialize( $vk_first_name_cache );	
 			} else {
-				$first_name = VK_Data::get_first_name();	
+				$first_name = VK_Data::get_first_name( 'DESC', $number_of_data );	
 				Settings::update_option( 'vk_first_name_cache', serialize( $first_name ) );
 			}
 		}
@@ -56,7 +60,7 @@ class FrontController extends Controller
 			if( !empty( $vk_last_name_cache ) ){
 				$last_name = unserialize( $vk_last_name_cache );	
 			} else {
-				$last_name = VK_Data::get_last_name();
+				$last_name = VK_Data::get_last_name( 'DESC', $number_of_data);
 				Settings::update_option( 'vk_last_name_cache', serialize( $last_name ) );
 			}
 		}
@@ -64,9 +68,9 @@ class FrontController extends Controller
 		foreach ( $first_name  as $key => $value) {
 			$data[] = array(
 				'fisrtName'			=> $value->first_name,
-				'fisrtNameCoutn'	=> $value->first_name_count,
-				'lastName'			=> isset( $last_name[ $key ]->last_name )? $last_name[ $key ]->last_name : '',
-				'lastNameCount'		=> isset( $last_name[ $key ]->last_name_count )? $last_name[ $key ]->last_name_count: '',
+				'fisrtNameCount'	=> $value->first_name_count,
+				'lastName'			=> isset( $last_name[ $key ] ) && isset( $last_name[ $key ]->last_name )? $last_name[ $key ]->last_name : '',
+				'lastNameCount'		=> isset( $last_name[ $key ] ) && isset(   $last_name[ $key ]->last_name_count )? $last_name[ $key ]->last_name_count: '',
 			);
 		}
 		return $data;

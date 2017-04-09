@@ -10,8 +10,9 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-
+// Homepage
 Route::get('/', 'FrontController@index');
+// Homepage Ajax
 Route::post('/vk-data', 'FrontController@vk_data');
 
 Route::auth();

@@ -82,7 +82,7 @@ class DashboardController extends Controller
 	public function start_import( Request $request ) { 
 		$items_number	=	$this->get_items_number();
 		if( VK_Data::count() < $items_number ){
-			$import = VK_Data::run_import(  $items_number );
+			$import = VK_Data::run_import( $items_number );
 			if( $import === true ){
 				return response()->json( ['result' => 'success', 'message'=> "Import started! Fetching users, please wait.", 'items_count'=> VK_Data::count() ] );				
 			} else {

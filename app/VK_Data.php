@@ -43,6 +43,7 @@ class VK_Data extends Model
 				$all_response = self::get_users( $citi_id );
 				if( 
 					!empty( $all_response ) 
+					&& isset( $all_response->response )
 					&& is_array( $all_response->response ) 
 					&& ( count( $all_response->response ) < 800 )
 				){
@@ -53,7 +54,7 @@ class VK_Data extends Model
 				} else { // if there are more than 800 users breack to sub requests	
 					// check for the data that we fetch before, if it is ok ,parse it
 					sleep(3);
-					if( !empty( $all_response ) && is_array( $all_response->response ) ){
+					if( !empty( $all_response ) && isset( $all_response->response ) && is_array( $all_response->response ) ){
 						$parsed_response =self::parse_response( $all_response, $users_ids );
 						$data = array_merge( $data, $parsed_response->data );
 						$users_ids = array_merge( $users_ids, $parsed_response->users_ids );						

@@ -14,40 +14,50 @@ class VK_Data extends Model
 			'screen_name', 'bdate', 'city', 'status', 'followers_count',			
 			'home_town', 'activities', 'personal'		
 		];	
-	public static $country = 2;// Ukrane
-	public static $count = 1000;// All posble (VK limit)
-	public static $token = 1000;// access token
-	public static $client;// \GuzzleHttp\Client
+	public $country = 2;// Ukrane
+	public $count = 1000;// All posble (VK limit)
+	public $token = 1000;// access token
+	public $client;// \GuzzleHttp\Client
 	
-	public static function run_import($import_number ){
+	/**
+	 * Settings instance 
+	 * 
+	 * @param string $name
+	 */
+	public function get_setings() {
+		return new Settings();
+	}
+	
+	public function run_import($import_number ){
 		try {
-			self::_run_import( $import_number );
+			$this->_run_import( $import_number );
 		}catch ( \Exception $ex ) {
 			return $ex->getMessage();
 		}
 		return true;
 	}	
 	
-	private static function _run_import( $import_number ){
-		self::$token = Settings::get_access_token();
-		self::$client = new \GuzzleHttp\Client();
-		if( !empty( self::$token ) ){
+	private function _run_import( $import_number ){
+		$settings = $this->get_setings();
+		$this->token = $settings->get_access_token();
+		$this->client = new \GuzzleHttp\Client();
+		if( !empty( $this->token ) ){
 			set_time_limit(360);
-			$citi_id = self::get_city_id();
+			$citi_id = $this->get_city_id();
 			if( !empty( $citi_id ) ){
 				$sort = array(1,0);
 				$sex = array(1,2);
 				$users_ids = array();
 				
 				$data = array();
-				$all_response = self::get_users( $citi_id );
+				$all_response = $this->get_users( $citi_id );
 				if( 
 					!empty( $all_response ) 
 					&& isset( $all_response->response )
 					&& is_array( $all_response->response ) 
 					&& ( count( $all_response->response ) < 800 )
 				){
-					$parsed_response =self::parse_response( $all_response, $users_ids );
+					$parsed_response =$this->parse_response( $all_response, $users_ids );
 					$data = array_merge( $data, $parsed_response->data );
 					$users_ids = array_merge( $users_ids, $parsed_response->users_ids );
 					sleep(3);
@@ -55,38 +65,38 @@ class VK_Data extends Model
 					// check for the data that we fetch before, if it is ok ,parse it
 					sleep(3);
 					if( !empty( $all_response ) && isset( $all_response->response ) && is_array( $all_response->response ) ){
-						$parsed_response =self::parse_response( $all_response, $users_ids );
+						$parsed_response =$this->parse_response( $all_response, $users_ids );
 						$data = array_merge( $data, $parsed_response->data );
 						$users_ids = array_merge( $users_ids, $parsed_response->users_ids );						
 					}
 					foreach ( $sort as $sort_item ){
 						foreach ( $sex as $sex_item ){
-							$response = self::get_users( $citi_id, $sort_item, $sex_item );
+							$response = $this->get_users( $citi_id, $sort_item, $sex_item );
 							sleep(3);//dont call to vk in 3 sec, in order to avoid fail (vk req)
-							$parsed_response =self::parse_response( $response, $users_ids );
+							$parsed_response =$this->parse_response( $response, $users_ids );
 							$data = array_merge( $data, $parsed_response->data );
 							$users_ids = array_merge( $users_ids, $parsed_response->users_ids );						
 						}
 					}
 				}
-				$count = self::count();
+				$count = $this->count();
 				if( $count < $import_number ){
 					try {
-						self::insert( $data );							
+						$this->insert( $data );							
 					} catch ( \Exception $ex) {
-						return self::stop_import();
+						return $this->stop_import();
 					}
 				} elseif( $count >= $import_number) {
 					
-					return self::stop_import();
+					return $this->stop_import();
 				}
 				
 			} 
 		}
-		return self::stop_import();
+		return $this->stop_import();
 	}
 	
-	public static function parse_response( $response, $users_ids ){
+	public function parse_response( $response, $users_ids ){
 		$data = array();
 		if( !empty( $response ) && isset( $response->response ) && is_array( $response->response ) ){
 			foreach ( $response->response as $item ){
@@ -96,9 +106,9 @@ class VK_Data extends Model
 				if( in_array( $item->uid, $users_ids ) ){
 					continue;
 				}
-				$_data = self::parse_data( $item );
+				$_data = $this->parse_data( $item );
 				$users_ids[] = $item->uid;
-				if(!self::where('vk_id', '=', $_data['vk_id'])->exists()) {
+				if(!$this->where('vk_id', '=', $_data['vk_id'])->exists()) {
 					$data[] = $_data;
 				}
 			}					
@@ -109,11 +119,12 @@ class VK_Data extends Model
 		);
 	}
 	
-	public static function get_city_id(){
-		$cities = self::get_cities();
+	public function get_city_id(){
+		$settings = $this->get_setings();
+		$cities = $this->get_cities();
 		if( is_array( $cities ) ){
 			$city_id = array_shift( $cities );
-			Settings::updateOrCreate( 
+			$settings->updateOrCreate( 
 				['name' => 'vk_cities'],
 				['value' => serialize( $cities ) ]
 			);
@@ -123,22 +134,22 @@ class VK_Data extends Model
 		 
 	}
 	
-	public static function stop_import(){
+	public function stop_import(){
 		return 'Import Stoped!';
 	}
 	
-	public static function get_users( $city, $sort = '', $sex = '' ){
+	public function get_users( $city, $sort = '', $sex = '' ){
 		$fields = 'sex,bdate,city,home_town,status,followers_count,nickname,'
 			. 'personal,connections,exports,activities,screen_name,maiden_name';
 		try{
 			$requst_url = sprintf( 
 					"https://api.vk.com/method/users.search?country=%s"
 						. "&city=%s&count=%s&fields=%s&access_token=%s",
-					self::$country,
+					$this->country,
 					$city,					
-					self::$count,
+					$this->count,
 					$fields,
-					self::$token
+					$this->token
 			);
 			if( !empty( $sort ) ){
 				$requst_url .= sprintf( '&sort=%s', $sort );
@@ -146,14 +157,14 @@ class VK_Data extends Model
 			if( !empty( $sex ) ){
 				$requst_url .= sprintf( '&sex=%s', $sex );
 			}
-			$res = self::$client->get( $requst_url );
+			$res = $this->client->get( $requst_url );
 		} catch ( \GuzzleHttp\Exception\ClientException $e ){
 			return false;
 		}
 		return json_decode( $res->getBody() );
 	}	
 	
-	public static function parse_data( $data ){
+	public function parse_data( $data ){
 		$new_data = array();
 		$fields = array(
 			'vk_id', 'first_name', 'last_name', 'sex', 'nickname', 
@@ -180,15 +191,15 @@ class VK_Data extends Model
 		return $new_data;
 	}
 	
-	public static function get_regions(){
+	public function get_regions(){
 		try{
-			$res = self::$client->get(
+			$res = $this->client->get(
 				sprintf( 
 					"https://api.vk.com/method/database.getRegions?country_id=%s"
 						. "&count=%s&access_token=%s",
-					self::$country,
-					self::$count,
-					self::$token
+					$this->country,
+					$this->count,
+					$this->token
 				)
 			);
 		} catch ( \GuzzleHttp\Exception\ClientException $e ){
@@ -197,16 +208,16 @@ class VK_Data extends Model
 		return json_decode( $res->getBody() );
 	}
 	
-	public static function get_region_cities( $region_id ){
+	public function get_region_cities( $region_id ){
 		try{
-			$res = self::$client->get(
+			$res = $this->client->get(
 				sprintf( 
 					"https://api.vk.com/method/database.getCities?country_id=%s"
 						. "&region_id=%s&need_all=0&count=%s&access_token=%s",
-					self::$country,
+					$this->country,
 					$region_id,
-					self::$count,
-					self::$token
+					$this->count,
+					$this->token
 				)
 			);
 		} catch ( \GuzzleHttp\Exception\ClientException $e ){
@@ -215,13 +226,14 @@ class VK_Data extends Model
 		return json_decode( $res->getBody() );
 	}
 	
-	public static function get_cities(){
-		$vk_cities = Settings::get_option('vk_cities');
+	public function get_cities(){
+		$settings = $this->get_setings();
+		$vk_cities = $settings->get_option('vk_cities');
 		if( !empty( $vk_cities )  ){
 			return unserialize( $vk_cities );
 		}
 		set_time_limit(360);
-		$regions = self::get_regions();
+		$regions = $this->get_regions();
 		sleep(3);//dont call to vk in 3 sec, in order to avoid fail (vk req)
 		if( 
 			!empty( $regions ) 
@@ -231,7 +243,7 @@ class VK_Data extends Model
 			$cities = array();
 			foreach ( $regions->response as $region ){
 				if( isset( $region->region_id ) ){
-					$region_cities = self::get_region_cities( $region->region_id );
+					$region_cities = $this->get_region_cities( $region->region_id );
 					sleep(3);
 					if( 
 						!empty( $region_cities ) 
@@ -252,7 +264,7 @@ class VK_Data extends Model
 					}
 				}				
 			}
-			Settings::updateOrCreate( 
+			$settings->updateOrCreate( 
 				['name' => 'vk_cities'],
 				['value' => serialize( $cities ) ]
 			);
@@ -261,14 +273,14 @@ class VK_Data extends Model
 		return false;
 	}
 	
-	public static function get_first_name( $order = 'DESC', $limit = 10 ){
-		return self::select( 'first_name' , DB::raw('count(*) as first_name_count') )
+	public function get_first_name( $order = 'DESC', $limit = 10 ){
+		return $this->select( 'first_name' , DB::raw('count(*) as first_name_count') )
 			->groupBy('first_name')->orderBy( 'first_name_count', $order )->limit( $limit )
 			->get();
 	}
 	
-	public static function get_last_name( $order = 'DESC', $limit = 10 ){
-		return self::select( 'last_name' , DB::raw('count(*) as last_name_count') )
+	public function get_last_name( $order = 'DESC', $limit = 10 ){
+		return $this->select( 'last_name' , DB::raw('count(*) as last_name_count') )
 			->groupBy('last_name')->orderBy( 'last_name_count', $order )->limit( $limit )
 			->get();
 	}

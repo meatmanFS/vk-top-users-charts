@@ -9,10 +9,10 @@ class Settings extends Model
     protected $fillable = ['name', 'value'];
     public $timestamps = false;
 
-    public static function get_login_url(){
-    	$client_id = self::get_client_id();
+    public function get_login_url(){
+    	$client_id = $this->get_client_id();
         if( !empty( $client_id ) ){
-            $redirect_uri = self::get_redirect_uri();
+            $redirect_uri = $this->get_redirect_uri();
             $display = 'page';
             $scope = 'friends,groups';
             $response_type = 'code';
@@ -23,11 +23,11 @@ class Settings extends Model
     }
 
 
-    public static function get_redirect_uri(){
+    public function get_redirect_uri(){
     	return url( '/dashboard/settings' );
     }
 
-    public static function get_client_id(){
+    public function get_client_id(){
     	$client_id = Settings::where('name', 'client_id')->get()->first();
     	if( !empty( $client_id->value ) ){
     		return $client_id->value;
@@ -35,7 +35,7 @@ class Settings extends Model
     	return '';
     }
 
-    public static function get_client_secret(){
+    public function get_client_secret(){
     	$client_secret = Settings::where('name', 'client_secret')->get()->first();
     	if( !empty( $client_secret->value ) ){
     		return $client_secret->value;
@@ -43,7 +43,7 @@ class Settings extends Model
     	return '';
     }
 	
-    public static function get_access_token(){
+    public function get_access_token(){
     	$access_token = Settings::where('name', 'access_token')->get()->first();
     	if( !empty( $access_token->value ) ){
     		return $access_token->value;
@@ -51,7 +51,7 @@ class Settings extends Model
     	return '';
     }
 	
-    public static function get_option( $option_name ){
+    public function get_option( $option_name ){
     	$option = Settings::where('name', $option_name )->get()->first();
     	if( !empty( $option->value ) ){
     		return $option->value;
@@ -59,20 +59,20 @@ class Settings extends Model
     	return '';
     }
 	
-    public static function update_option( $option_name, $option_value ){
-    	return self::updateOrCreate( 
+    public function update_option( $option_name, $option_value ){
+    	return $this->updateOrCreate( 
             ['name' => $option_name],
             ['value' => $option_value ]
         );
     }
 
-    public static function check_oauth(){
+    public function check_oauth(){
     	if( !empty( $_GET['code'] ) ){
     		$client = new \GuzzleHttp\Client();
     		$code = $_GET['code'];
-    		$client_id = self::get_client_id();
-			$client_secret = self::get_client_secret();
-			$redirect_uri = self::get_redirect_uri();
+    		$client_id = $this->get_client_id();
+			$client_secret = $this->get_client_secret();
+			$redirect_uri = $this->get_redirect_uri();
 			try{
 				$res = $client->get("https://oauth.vk.com/access_token?client_id={$client_id}&client_secret={$client_secret}&redirect_uri={$redirect_uri}&code={$code}");
 			} catch ( \GuzzleHttp\Exception\ClientException $e ){
@@ -82,7 +82,7 @@ class Settings extends Model
 			if( 200 == $res->getStatusCode()){
 				$response = json_decode( $res->getBody() );
 				if( isset( $response->access_token ) ){
-					self::updateOrCreate( 
+					$this->updateOrCreate( 
 			            ['name' => 'access_token'],
 			            ['value' => $response->access_token ]
 			        );

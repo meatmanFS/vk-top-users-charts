@@ -10,6 +10,23 @@ use App\Settings;
 
 class FrontController extends Controller
 {
+	/**
+	 * Magic methiod to fill in the models instances
+	 * 
+	 * @param string $name
+	 */
+	public function __get($name) {
+		switch ( $name ){
+			case 'settings':
+				$this->settings = new Settings();
+			break;
+			case 'vk_data':
+				$this->vk_data = new VK_Data();
+			break;
+		}
+		return $this->$name;
+	}
+	
     public function index() {
 		$app_data = array(
 			'token'		=> csrf_token(),
@@ -40,37 +57,37 @@ class FrontController extends Controller
 		$last_name = array();
 
 		if( 'first_name' == strtolower( $sort ) ){
-			$first_name = VK_Data::get_first_name( $order, $number_of_data );
-			Settings::update_option( 'vk_first_name_cache', serialize( $first_name ) );
+			$first_name = $this->vk_data->get_first_name( $order, $number_of_data );
+			$this->settings->update_option( 'vk_first_name_cache', serialize( $first_name ) );
 		} elseif( 'last_name' == strtolower( $sort ) ){
-			$last_name = VK_Data::get_last_name( $order, $number_of_data );
-			Settings::update_option( 'vk_last_name_cache', serialize( $last_name ) );
+			$last_name = $this->vk_data->get_last_name( $order, $number_of_data );
+			$this->settings->update_option( 'vk_last_name_cache', serialize( $last_name ) );
 		} 
 				
 		if( empty( $first_name ) ){
-			$vk_first_name_cache = Settings::get_option( 'vk_first_name_cache' );
+			$vk_first_name_cache = $this->settings->get_option( 'vk_first_name_cache' );
 			if( !empty( $vk_first_name_cache ) ){
 				$first_name = unserialize( $vk_first_name_cache );	
 				if( $first_name->isEmpty() || $initial ){
-					$first_name = VK_Data::get_first_name( 'DESC', $number_of_data );	
-					Settings::update_option( 'vk_first_name_cache', serialize( $first_name ) );
+					$first_name = $this->vk_data->get_first_name( 'DESC', $number_of_data );	
+					$this->settings->update_option( 'vk_first_name_cache', serialize( $first_name ) );
 				}
 			} else {
-				$first_name = VK_Data::get_first_name( 'DESC', $number_of_data );	
-				Settings::update_option( 'vk_first_name_cache', serialize( $first_name ) );
+				$first_name = $this->vk_data->get_first_name( 'DESC', $number_of_data );	
+				$this->settings->update_option( 'vk_first_name_cache', serialize( $first_name ) );
 			}
 		}
 		if( empty( $last_name ) ){
-			$vk_last_name_cache = Settings::get_option( 'vk_last_name_cache' );
+			$vk_last_name_cache = $this->settings->get_option( 'vk_last_name_cache' );
 			if( !empty( $vk_last_name_cache ) ){
 				$last_name = unserialize( $vk_last_name_cache );
 				if( $last_name->isEmpty() || $initial ){
-					$last_name = VK_Data::get_last_name( 'DESC', $number_of_data );	
-					Settings::update_option( 'vk_last_name_cache', serialize( $last_name ) );
+					$last_name = $this->vk_data->get_last_name( 'DESC', $number_of_data );	
+					$this->settings->update_option( 'vk_last_name_cache', serialize( $last_name ) );
 				}
 			} else {
-				$last_name = VK_Data::get_last_name( 'DESC', $number_of_data);
-				Settings::update_option( 'vk_last_name_cache', serialize( $last_name ) );
+				$last_name = $this->vk_data->get_last_name( 'DESC', $number_of_data);
+				$this->settings->update_option( 'vk_last_name_cache', serialize( $last_name ) );
 			}
 		}
 		$data = array();		

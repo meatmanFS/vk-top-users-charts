@@ -20,7 +20,7 @@ var TableApp = createClass({
 	// On mounting the element get rows data , using the ajax
 	componentDidMount: function() {		
 		var _this = this;
-		this.serverRequest = this.sendAjaxRequest( appData.getData, this.props.order, "POST",function (result) {
+		this.serverRequest = this.sendAjaxRequest( appData.getData, Object.assign({}, this.props.order, {initial: 1}), "POST",function (result) {
 			// Removing this will return empty table */
 			_this.props.dispatch( actions.getRows( result, _this.props.order, result.length > 0 ? true: false  ) );
 			_this.ajaxStop();
@@ -57,7 +57,7 @@ var TableApp = createClass({
 	},
 	getRows: function( order ){
        var _this = this;
-		this.serverRequest = this.sendAjaxRequest( appData.getData, order, "POST",function (result) {
+		this.serverRequest = this.sendAjaxRequest( appData.getData, Object.assign({}, order, {initial: 0}) , "POST",function (result) {
 			// Removing this will return empty table */	
 			_this.props.dispatch( actions.getRows( result, order, true ) );
 			_this.ajaxStop();

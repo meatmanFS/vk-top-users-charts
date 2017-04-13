@@ -26,8 +26,9 @@ class FrontController extends Controller
 
 		$number_of_data = 30;
 		
-        $sort	= request()->input('sort');
-        $order	= request()->input('order');
+        $sort		= request()->input('sort');
+        $order		= request()->input('order');
+        $initial	= (boolean)request()->input('initial');
 		if( 'desc' == strtolower( $order ) ){
 			$order = 'DESC';
 		} elseif( 'asc' == strtolower( $order ) ){
@@ -45,12 +46,12 @@ class FrontController extends Controller
 			$last_name = VK_Data::get_last_name( $order, $number_of_data );
 			Settings::update_option( 'vk_last_name_cache', serialize( $last_name ) );
 		} 
-
+				
 		if( empty( $first_name ) ){
 			$vk_first_name_cache = Settings::get_option( 'vk_first_name_cache' );
 			if( !empty( $vk_first_name_cache ) ){
 				$first_name = unserialize( $vk_first_name_cache );	
-				if( $first_name->isEmpty() ){
+				if( $first_name->isEmpty() || $initial ){
 					$first_name = VK_Data::get_first_name( 'DESC', $number_of_data );	
 					Settings::update_option( 'vk_first_name_cache', serialize( $first_name ) );
 				}
@@ -62,8 +63,8 @@ class FrontController extends Controller
 		if( empty( $last_name ) ){
 			$vk_last_name_cache = Settings::get_option( 'vk_last_name_cache' );
 			if( !empty( $vk_last_name_cache ) ){
-				$last_name = unserialize( $vk_last_name_cache );	
-				if( $last_name->isEmpty() ){
+				$last_name = unserialize( $vk_last_name_cache );
+				if( $last_name->isEmpty() || $initial ){
 					$last_name = VK_Data::get_last_name( 'DESC', $number_of_data );	
 					Settings::update_option( 'vk_last_name_cache', serialize( $last_name ) );
 				}

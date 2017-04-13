@@ -4,3 +4,6 @@
 #vk-top-users-table .table-wrapper {
     min-height: 400px;
 }
+.sorted-by {
+    border-bottom: 2px solid green;
+}

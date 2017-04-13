@@ -3,7 +3,8 @@ import * as types from '../constants/ActionTypes';
 const initialState = {
 	order: {
     sort: 'first_name',
-    order:'DESC'
+    order:'DESC',
+    second_order: 'DESC'
   }, 
 	rows: [],
   hasRows: true,

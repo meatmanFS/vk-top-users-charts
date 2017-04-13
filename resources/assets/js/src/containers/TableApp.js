@@ -9,7 +9,12 @@ var TableApp = createClass({
 	// When component mount, it will get this state 
 	getInitialState: function() {
 		return {
-			ajax: false
+			ajax: false,
+			order:{
+				sortBy: 'first_name',
+				first_name: 'DESC',
+				last_name: 'DESC'
+			},
 		};
 	},	
 	// On mounting the element get rows data , using the ajax
@@ -68,11 +73,16 @@ var TableApp = createClass({
 			if( this.props.order.order === 'ASC' ){
 				sort = 'DESC';
 			} 
-		}
-		this.props.dispatch( actions.getRows( this.props.rows,  {
-			sort: order_by,
-    		order:sort
-		}, true ) );
+		} else {
+			if( this.state.order[ order_by ] === 'ASC' ){
+				sort = 'DESC';
+			}
+			
+		}		
+		var state = this.state;
+		state.order[ order_by ] = sort;
+		this.state.order.sortBy = order_by;
+		this.setState( state );
 
 		this.getRows( {
 			sort: order_by,
@@ -82,21 +92,19 @@ var TableApp = createClass({
 	// On rendering check if the sort is set by this column
 	// and add shevron up or down, depends on the sort order
 	checkSort: function( column ){
-		if( this.props.order.sort === column ){
-			var classes = 'fa-chevron-up';
-			if( this.props.order.order === 'ASC' ){
-				classes = 'fa-chevron-down';				
-			}
-
-			if( this.state.ajax ){
-				return <span>
-					<i className={"fa " + classes } aria-hidden="true"></i>&nbsp;
-					<i className="fa fa-spinner fa-spin" aria-hidden="true"></i>
-				</span>;
-			}
-			
-			return <i className={"fa " + classes } aria-hidden="true"></i>;
+		var classes = 'fa-chevron-up';
+		if( this.state.order[ column ]  === 'ASC' ){
+			classes = 'fa-chevron-down';				
 		}
+
+		if( this.state.ajax && this.state.order.sortBy === column ){
+			return <span>
+				<i className={"fa " + classes } aria-hidden="true"></i>&nbsp;
+				<i className="fa fa-spinner fa-spin" aria-hidden="true"></i>
+			</span>;
+		}
+		
+		return <i className={"fa " + classes } aria-hidden="true"></i>;
 	},
 	// On rendering check if for this column is applyed 
 	// the sorting and add class to it .sorted-by 

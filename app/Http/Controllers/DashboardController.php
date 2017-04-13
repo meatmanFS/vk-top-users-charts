@@ -29,13 +29,13 @@ class DashboardController extends Controller
 		$items_number	=	$this->get_items_number();
 		$items_сount	= VK_Data::count();		
 		$persent		= ( ( $items_сount /( $items_number / 100 )  ) < 100 ) ? $items_сount /( $items_number / 100 ): 100;
-				
+		$access_token	= (boolean)Settings::get_access_token();		
 		$import_data = array(
 			'startImportUrl'	=> url('/dashboard/start-import/'),
 			'token'				=> csrf_token(),
 			'itemsNumber'		=> $items_number,
 		);
-        return view('dashboard.index', compact( 'import_data','items_number','items_сount', 'persent' ));
+        return view('dashboard.index', compact( 'import_data','items_number','items_сount', 'persent', 'access_token' ));
     }
 
     public function settings(){

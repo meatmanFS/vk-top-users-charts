@@ -7,6 +7,11 @@
             <div class="panel panel-default">
                 <div class="panel-heading">Dashboard</div>
                 <div class="panel-body">
+					@if( !$access_token )
+					<div class="alert alert-danger" role="alert">
+						Please go to the <a href="{{url('/dashboard/settings')}}">Settings</a> and setup application!
+					</div>
+					@else
 					<div class="alert alert-success vk-api-import-success"></div>
 					<div class="alert alert-danger vk-api-import-errror"></div>
 					<div class="row">
@@ -23,8 +28,8 @@
 						<div class="col-md-2">
 							<button type="button" class="btn btn-primary btn-xs active start-vk-api-import">Start Import</button>
 						</div>
-					</div>
-                    
+					</div>                    
+					@endif
                 </div>
             </div>
         </div>

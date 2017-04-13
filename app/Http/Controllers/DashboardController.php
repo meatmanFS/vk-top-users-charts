@@ -48,6 +48,10 @@ class DashboardController extends Controller
 
         return view('dashboard.settings', compact('client_id','login_url','client_secret','oauth_error','access_token','vk_users_number'));
     }
+	
+	public function help() {
+		 return view('dashboard.help');
+	}
 
 	public function get_items_number() {
 		$items_number	=	Settings::get_option( 'vk_users_number' );

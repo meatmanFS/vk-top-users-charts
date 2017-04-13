@@ -25,7 +25,7 @@
                             <input type="text" class="form-control" id="client_secret" name="client_secret" value="{{ $client_secret }}" required>
                         </div>                  
                         <div class="form-group">
-                            <label for="vk_users_number">Number of importing users</label>
+                            <label for="vk_users_number">Number of importing users (is equal or more( while single request ) )</label>
                             <input type="text" class="form-control" id="vk_users_number" name="vk_users_number" value="{{ $vk_users_number }}">
                         </div>                  
                         @if( $oauth_error )

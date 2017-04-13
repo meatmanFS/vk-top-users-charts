@@ -33,7 +33,7 @@ var ChartApp = createClass({
 					name: row.fisrtName,
 					commonNames: row.fisrtNameCount
 				});
-			}.bind(this));
+			});
 		}
 		return newData;
 	},
@@ -47,7 +47,7 @@ var ChartApp = createClass({
 					name: row.lastName,
 					commonNames: row.lastNameCount
 				});
-			}.bind(this));
+			});
 		}
 		return newData;
 	},
@@ -57,9 +57,12 @@ var ChartApp = createClass({
 	},
 
 	render: function() {
-	    return (  	
-	    	<div>
-	    		<select class="form-control" onChange={this.change} value={this.state.chartType}>
+		if( ! this.props.hasRows  ){
+			return <div className="alert alert-danger">Please go to the dashboard and import the users!</div>;
+		}
+	    return (
+	    	<div>  
+				<select class="form-control" onChange={this.change} value={this.state.chartType}>
 				  <option value="line">Line Chart</option>
 				  <option value="pie">Pie Chart</option>
 				</select>
@@ -75,7 +78,6 @@ var ChartApp = createClass({
 						);
 					}
 				}.call(this)}
-				
 	    	</div>
 	     	
 	    );

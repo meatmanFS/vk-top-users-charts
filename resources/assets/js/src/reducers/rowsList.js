@@ -6,7 +6,7 @@ const initialState = {
     order:'DESC'
   }, 
 	rows: [],
-  hasRows: false,
+  hasRows: true,
 };
 
 export default function rowsList( state = initialState , action ) {

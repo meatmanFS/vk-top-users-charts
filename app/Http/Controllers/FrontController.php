@@ -50,6 +50,10 @@ class FrontController extends Controller
 			$vk_first_name_cache = Settings::get_option( 'vk_first_name_cache' );
 			if( !empty( $vk_first_name_cache ) ){
 				$first_name = unserialize( $vk_first_name_cache );	
+				if( $first_name->isEmpty() ){
+					$first_name = VK_Data::get_first_name( 'DESC', $number_of_data );	
+					Settings::update_option( 'vk_first_name_cache', serialize( $first_name ) );
+				}
 			} else {
 				$first_name = VK_Data::get_first_name( 'DESC', $number_of_data );	
 				Settings::update_option( 'vk_first_name_cache', serialize( $first_name ) );
@@ -59,18 +63,22 @@ class FrontController extends Controller
 			$vk_last_name_cache = Settings::get_option( 'vk_last_name_cache' );
 			if( !empty( $vk_last_name_cache ) ){
 				$last_name = unserialize( $vk_last_name_cache );	
+				if( $last_name->isEmpty() ){
+					$last_name = VK_Data::get_last_name( 'DESC', $number_of_data );	
+					Settings::update_option( 'vk_last_name_cache', serialize( $last_name ) );
+				}
 			} else {
 				$last_name = VK_Data::get_last_name( 'DESC', $number_of_data);
 				Settings::update_option( 'vk_last_name_cache', serialize( $last_name ) );
 			}
 		}
-		$data = array();
-		foreach ( $first_name  as $key => $value) {
+		$data = array();		
+		foreach ( $first_name as $key => $value) {
 			$data[] = array(
 				'fisrtName'			=> $value->first_name,
 				'fisrtNameCount'	=> $value->first_name_count,
 				'lastName'			=> isset( $last_name[ $key ] ) && isset( $last_name[ $key ]->last_name )? $last_name[ $key ]->last_name : '',
-				'lastNameCount'		=> isset( $last_name[ $key ] ) && isset(   $last_name[ $key ]->last_name_count )? $last_name[ $key ]->last_name_count: '',
+				'lastNameCount'		=> isset( $last_name[ $key ] ) && isset( $last_name[ $key ]->last_name_count )? $last_name[ $key ]->last_name_count: '',
 			);
 		}
 		return $data;

@@ -16,8 +16,8 @@ var TableApp = createClass({
 	componentDidMount: function() {		
 		var _this = this;
 		this.serverRequest = this.sendAjaxRequest( appData.getData, this.props.order, "POST",function (result) {
-			// Removing this will return empty table */	
-			_this.props.dispatch( actions.getRows( result, _this.props.order, true ) );
+			// Removing this will return empty table */
+			_this.props.dispatch( actions.getRows( result, _this.props.order, result.length > 0 ? true: false  ) );
 			_this.ajaxStop();
 		}, function(){		
 			_this.props.dispatch( actions.getNoRows() );
@@ -110,9 +110,14 @@ var TableApp = createClass({
 	//reacts render the component here
 	render: function() {
 		var rows = [];
-		this.props.rows.forEach(function(row, key, array ) {      
-			rows.push(<TableRow row={row} key={key} c/>);
-		}.bind(this));
+		if( this.props.rows.length > 0 ){
+			this.props.rows.forEach(function(row, key, array ) {      
+				rows.push(<TableRow row={row} key={key} />);
+			});
+		} else {
+			rows.push(<tr key="TableApp.initial.load" colSpan="2"><td colSpan="2" key="ableApp.initial.load.alert" className="alert alert-success">Loading data!</td></tr>);
+		}
+
 		
 		return (
 			<div className="table-wrapper" >
@@ -123,7 +128,13 @@ var TableApp = createClass({
 							<th className={"table-cell column-sortable last_name" + this.sortableColumn('last_name') } onClick={this.sotrToggle.bind(null, 'last_name')}>Last Name ( Most common ) {this.checkSort('last_name')}</th>							
 						</tr>
 					</thead>
-					<tbody>{rows}</tbody>
+					{function(){
+						if( this.props.hasRows ){
+							return <tbody>{rows}</tbody>;
+						} else {
+							return <tbody><tr><td colSpan="2" className="alert alert-danger">No users data in database!</td></tr></tbody>;								
+						}							
+					}.call(this)}
 				</table>
 			</div>
 		);

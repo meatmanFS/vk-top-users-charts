@@ -38,19 +38,9 @@
 					<div class="panel panel-default">
 						<div class="panel-heading">Results</div>
 						<div class="panel-body">
-							<p>Work of the application <a href="https://www.screencast.com/t/5FBJgIv5">Screencast</a></p>
+							<p>Work of the application <a href="https://www.youtube.com/watch?v=wTAZwuqUC6U">Screencast</a></p>
 							<p>
-								<object id="scPlayer" class="embeddedObject" width="1920" height="1040" type="application/x-shockwave-flash" data="https://content.screencast.com/users/meatmanFS/folders/Jing/media/2a1b8ac7-b68a-4bcc-b8d9-4c8d75b545ec/jingswfplayer.swf" style="width:1238.769230769231px; height:671px;">
-									<param name="movie" value="https://content.screencast.com/users/meatmanFS/folders/Jing/media/2a1b8ac7-b68a-4bcc-b8d9-4c8d75b545ec/jingswfplayer.swf">
-									<param name="quality" value="high">
-									<param name="bgcolor" value="#FFFFFF">
-									<param name="flashVars" value="containerwidth=1920&amp;containerheight=1040&amp;thumb=https://content.screencast.com/users/meatmanFS/folders/Jing/media/2a1b8ac7-b68a-4bcc-b8d9-4c8d75b545ec/FirstFrame.jpg&amp;content=https://content.screencast.com/users/meatmanFS/folders/Jing/media/2a1b8ac7-b68a-4bcc-b8d9-4c8d75b545ec/2017-04-11_1448.swf&amp;blurover=false">
-									<param name="allowFullScreen" value="true">
-									<param name="scale" value="exactfit">
-									<param name="allowScriptAccess" value="always">
-									<param name="wmode" value="opaque">
-									<param name="base" value="https://content.screencast.com/users/meatmanFS/folders/Jing/media/2a1b8ac7-b68a-4bcc-b8d9-4c8d75b545ec/">
-								</object>								
+								<iframe width="560" height="315" src="https://www.youtube.com/embed/wTAZwuqUC6U" frameborder="0" allowfullscreen></iframe>							
 							</p>
 							<p>
 								About the import. I can get more than 300,000 users records , and the VK is start to return the empty response.

@@ -26,7 +26,12 @@ class FrontController extends Controller
 		}
 		return $this->$name;
 	}
-	
+
+    /**
+     * The homepage
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index() {
 		$app_data = array(
 			'token'		=> csrf_token(),
@@ -34,7 +39,13 @@ class FrontController extends Controller
 		);
 		return view('front.index', compact('app_data'));
 	}
-	
+
+    /**
+     * The ajax callback for getting the users data on homepage
+     *
+     * @param Request $request
+     * @return array
+     */
 	public function vk_data( Request $request ) {
 		$this->validate($request, [
             'sort'	=> 'required',

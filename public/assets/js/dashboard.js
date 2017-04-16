@@ -54,12 +54,11 @@ jQuery(document).ready(function($){
 				} else {
 					$('.vk-api-import-success').show().html( '<h2>Import stoped!</h2>'+ '<p>Users count:'+ itemsCount +'</p>' );
 					$('.start-vk-api-import-progress').removeClass('active');
-					$( '.start-vk-api-import' ).addClass( 'active' ).data('import-running', 0);
+                    run_update = false;
+                    $( '.start-vk-api-import' ).addClass( 'active' ).data('import-running', 0);
 				}
 			}else{
-				$('.vk-api-import-errror').show().html( '<h2>' + response.message +'</h2>' );		
-				$('.start-vk-api-import-progress').removeClass('active');
-				$( '.start-vk-api-import' ).addClass( 'active' ).data('import-running', 0);
+				$('.vk-api-import-errror').show().html( '<h2>' + response.message +'</h2>' );
 				//try again on fail
 				runVKImport( itemsNumber );
 			}
